@@ -30,6 +30,16 @@
   <a href="#-ai-agent-prompt">AI Prompt</a>
 </p>
 
+## 🖥️ Live Team Management App
+
+| Desktop | Mobile |
+|---|---|
+| <img src="screenshots/app-desktop.png" width="600" /> | <img src="screenshots/app-mobile.png" width="260" /> |
+
+> **TeamFlow** — Team roster + Company cron scheduler on **port :8080** (auto-selected free port). Tabs: Members ⇄ Cron. Next-run, cron expr, frequency, WhatsApp delivery.
+
+Live demo: `http://localhost:8080` · API: `GET /api/members` · `GET /api/schedules` · `GET /api/stats` · `PUT /api/schedules/:id` saves cron.
+
 ---
 
 ## 🎬 What is This?
