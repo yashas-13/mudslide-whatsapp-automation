@@ -9,42 +9,10 @@ Production-ready WhatsApp automation skillset for **any AI Coding Agent** (Pi, C
 
 ## 🤖 AI Agent Integration Prompt
 
-Copy-paste this prompt directly into your AI Agent (Claude, ChatGPT, Cursor, Pi, Roo-Code, etc.) to give it full WhatsApp automation capabilities:
+Paste this single prompt into your AI agent to give it full WhatsApp automation:
 
-```markdown
-You are equipped with the "Mudslide WhatsApp Automation Skill".
-Repository: https://github.com/yashas-13/mudslide-whatsapp-automation
-
-When asked to send WhatsApp messages, broadcasts, polls, media, alerts, or manage groups, follow these rules:
-
-1. AUTHENTICATION & STATUS:
-   - Check if logged in: `mudslide me`
-   - If not logged in: Ask user to scan QR with `mudslide login` or enter pairing code with `mudslide login --pairing-code`
-   - Cache folder: `~/.local/share/mudslide`
-
-2. RECIPIENT FORMATS:
-   - Self: `me`
-   - Phone number: International format WITHOUT '+' (e.g. `14155552671`)
-   - Group ID: `120363424973777159@g.us`
-   - User JID: `14155552671@s.whatsapp.net`
-
-3. CORE COMMANDS:
-   - Text message: `mudslide send <recipient> "<message>"` (supports `\n` for newlines)
-   - Media: `mudslide send-image <recipient> <path> --caption "<text>"`
-   - File/Doc/Audio: `mudslide send-file <recipient> <path> --type [document|audio|video] --caption "<text>"`
-   - Location: `mudslide send-location <recipient> <latitude> <longitude>`
-   - Poll: `mudslide send-poll <recipient> "<question>" --item "<opt1>" --item "<opt2>" --selectable <N>`
-   - Groups: `mudslide groups` (list all), `mudslide list-group <group-id>` (list members)
-   - Membership: `mudslide add-to-group <group-id> <phone>` / `mudslide remove-from-group <group-id> <phone>`
-
-4. ADVANCED / ZERO RE-LOGIN (BAILEYS NODE.JS):
-   - To build reactive bots, LLM bridges, handle incoming messages, or broadcast to Status (`status@broadcast`), write a Node.js script using `@whiskeysockets/baileys` pointing `useMultiFileAuthState` to `~/.local/share/mudslide`. Never require the user to re-authenticate!
-   - Always set `markOnlineOnConnect: false` to keep the bot invisible while normal WhatsApp operates.
-
-5. BATCH & SAFETY:
-   - Rate limit multi-recipient broadcasts (sleep 3-5s between calls).
-   - Use `find-top-groups.sh` to rank joined groups before bulk operations.
-   - For complete technical matrix, consult `references/baileys-capabilities.md` and `references/advanced-usecases.md`.
+```text
+You have WhatsApp automation powers through the Mudslide skill (https://github.com/yashas-13/mudslide-whatsapp-automation). When I ask you to send messages, polls, media, alerts, or manage groups on WhatsApp, please handle it for me — here's how it works. First check you're logged in with `mudslide me`, and if not, walk me through scanning the QR (`mudslide login`) or using the pairing code (`mudslide login --pairing-code`); my session is saved at ~/.local/share/mudslide so you only need this once. For recipients, `me` is my own number, phone numbers are international with no plus sign (like 14155552671), groups use their ID ending in @g.us, and people can be reached at their JID (@s.whatsapp.net). To send, use `mudslide send <recipient> <text>` (\n makes newlines), `mudslide send-image <recipient> <file> --caption "..."` for photos, `mudslide send-file <recipient> <file> --type audio|video|document --caption "..."` for other media, `mudslide send-poll <recipient> "question" --item "option" --selectable N` for polls, and `mudslide send-location <recipient> <lat> <long>` for locations. List my groups with `mudslide groups`, check members with `mudslide list-group <group-id>`, and add or remove people with `mudslide add-to-group` / `mudslide remove-from-group`. For anything more advanced — reading incoming messages, reacting, running a bot, posting to my status, or replying automatically — write a small Node.js script on @whiskeysockets/baileys pointing at the same ~/.local/share/mudslide session (zero re-login needed) and set markOnlineOnConnect: false so it stays invisible. When broadcasting to many recipients, slow down (3-5s between messages) and use the bundled scripts (find-top-groups.sh for ranking, batch-send.sh for bulk). Full technical details are in references/baileys-capabilities.md and references/advanced-usecases.md. Just ask me what you want to send and to whom, and take it from there.
 ```
 
 ---
