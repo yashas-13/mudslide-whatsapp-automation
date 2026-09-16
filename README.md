@@ -1,76 +1,145 @@
-# Mudslide WhatsApp Automation
+# Mudslide WhatsApp Automation Skill
 
-Complete WhatsApp automation skillset for [pi](https://github.com/earendil-works/pi-coding-agent) / Claude Code — built on the [mudslide](https://github.com/robvanderleek/mudslide) WhatsApp CLI (Baileys engine).
+[![ISC License](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/yashas-13/mudslide-whatsapp-automation?style=social)](https://github.com/yashas-13/mudslide-whatsapp-automation)
 
-## What's Inside
+Production-ready WhatsApp automation skillset for **any AI Coding Agent** (Pi, Claude Code, Cursor, Windsurf, Roo Code, Aider, Codex, GitHub Copilot). Built on top of the [Mudslide](https://github.com/robvanderleek/mudslide) CLI and [Baileys](https://github.com/WhiskeySockets/Baileys) engine.
+
+---
+
+## 🤖 AI Agent Integration Prompt
+
+Copy-paste this prompt directly into your AI Agent (Claude, ChatGPT, Cursor, Pi, Roo-Code, etc.) to give it full WhatsApp automation capabilities:
+
+```markdown
+You are equipped with the "Mudslide WhatsApp Automation Skill".
+Repository: https://github.com/yashas-13/mudslide-whatsapp-automation
+
+When asked to send WhatsApp messages, broadcasts, polls, media, alerts, or manage groups, follow these rules:
+
+1. AUTHENTICATION & STATUS:
+   - Check if logged in: `mudslide me`
+   - If not logged in: Ask user to scan QR with `mudslide login` or enter pairing code with `mudslide login --pairing-code`
+   - Cache folder: `~/.local/share/mudslide`
+
+2. RECIPIENT FORMATS:
+   - Self: `me`
+   - Phone number: International format WITHOUT '+' (e.g. `14155552671`)
+   - Group ID: `120363424973777159@g.us`
+   - User JID: `14155552671@s.whatsapp.net`
+
+3. CORE COMMANDS:
+   - Text message: `mudslide send <recipient> "<message>"` (supports `\n` for newlines)
+   - Media: `mudslide send-image <recipient> <path> --caption "<text>"`
+   - File/Doc/Audio: `mudslide send-file <recipient> <path> --type [document|audio|video] --caption "<text>"`
+   - Location: `mudslide send-location <recipient> <latitude> <longitude>`
+   - Poll: `mudslide send-poll <recipient> "<question>" --item "<opt1>" --item "<opt2>" --selectable <N>`
+   - Groups: `mudslide groups` (list all), `mudslide list-group <group-id>` (list members)
+   - Membership: `mudslide add-to-group <group-id> <phone>` / `mudslide remove-from-group <group-id> <phone>`
+
+4. ADVANCED / ZERO RE-LOGIN (BAILEYS NODE.JS):
+   - To build reactive bots, LLM bridges, handle incoming messages, or broadcast to Status (`status@broadcast`), write a Node.js script using `@whiskeysockets/baileys` pointing `useMultiFileAuthState` to `~/.local/share/mudslide`. Never require the user to re-authenticate!
+   - Always set `markOnlineOnConnect: false` to keep the bot invisible while normal WhatsApp operates.
+
+5. BATCH & SAFETY:
+   - Rate limit multi-recipient broadcasts (sleep 3-5s between calls).
+   - Use `find-top-groups.sh` to rank joined groups before bulk operations.
+   - For complete technical matrix, consult `references/baileys-capabilities.md` and `references/advanced-usecases.md`.
+```
+
+---
+
+## 📦 Compatibility & Agent Support Matrix
+
+| Harness / Agent | Support Level | Installation / Loading Method |
+|---|---|---|
+| **Pi Coding Agent** | Native | `git clone` into `~/.pi/agent/skills/mudslide` |
+| **Claude Code** | Native | Add to `~/.claude/skills/` or invoke via prompt |
+| **Cursor / Windsurf** | Full | Add prompt to `.cursorrules` / `.windsurfrules` |
+| **Roo Code / Cline** | Full | Add prompt to Custom Instructions / System Prompt |
+| **Aider** | Full | Pass as `--read-prompt` or add to `.aider.conf.yml` |
+| **OpenAI Codex / GPTs** | Full | Paste Agent Integration Prompt into instructions |
+
+---
+
+## 🛠 Directory Structure
 
 ```
-mudslide/
-├── SKILL.md                          # Skill manifest — command reference + Baileys creds-reuse pattern
+mudslide-whatsapp-automation/
+├── SKILL.md                          # Standard Agent Skill specification
+├── README.md                         # Universal Agent Prompt & Documentation
+├── LICENSE                           # ISC License
 ├── scripts/
-│   ├── batch-send.sh                 # Broadcast same message to recipient list (rate-limited)
-│   └── find-top-groups.sh            # Rank all joined groups by member count
+│   ├── batch-send.sh                 # Rate-limited bulk message broadcaster
+│   ├── find-top-groups.sh            # Rank joined groups by member count
+│   ├── devops-alert.sh               # Server metric / incident threshold alerter
+│   └── ai-bridge-example.mjs         # Node.js LLM / AI agent listener bridge
 └── references/
-    ├── baileys-capabilities.md       # Full WhatsApp API capability matrix (mudslide vs Baileys)
-    └── advanced-usecases.md          # Production recipes: DevOps alerts, LLM bridge, digests, media pipelines
+    ├── baileys-capabilities.md       # Full API matrix (Mudslide CLI vs Baileys engine)
+    └── advanced-usecases.md          # 5 Production recipes (DevOps, LLM, Digests, Media, Community)
 ```
 
-## Quick Start
+---
+
+## 🚀 Native Pi / Claude Code Installation
+
+To load this as a native skill on your system:
 
 ```bash
-# Install
-npm i -g mudslide
+# Global installation for Pi
+mkdir -p ~/.pi/agent/skills
+git clone https://github.com/yashas-13/mudslide-whatsapp-automation ~/.pi/agent/skills/mudslide
 
-# Auth (scan QR or use pairing code)
-mudslide login
-
-# Send
-mudslide send <recipient> "Hello world"
-mudslide send-image <recipient> photo.png --caption "Nice pic"
-mudslide send-poll <recipient> "Which day?" --item "Mon" --item "Fri"
-
-# Groups
-mudslide groups
-mudslide list-group <group-id>
+# Or for Claude Code
+mkdir -p ~/.claude/skills
+git clone https://github.com/yashas-13/mudslide-whatsapp-automation ~/.claude/skills/mudslide
 ```
 
-Recipients: `me` (self), `3161234567890` (intl phone, no `+`), `123456789-987654321@g.us` (group JID).
+---
 
-## Advanced: Reuse Login for Bots
+## 📖 Key Features & Recipes
 
-mudslide's cache folder (`~/.local/share/mudslide`) is a Baileys `useMultiFileAuthState` directory. Point Baileys at it for **receive, reactions, status/story broadcasts, advanced group admin, and LLM-powered chat bots with zero re-login**.
+### 1. Zero Re-login Architecture
+Mudslide's session cache (`~/.local/share/mudslide`) is 100% compatible with Baileys `useMultiFileAuthState`. Any background script can tap into the authenticated session without triggering a new QR scan:
 
-```js
-import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys'
+```javascript
+import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys';
 
-const { state, saveCreds } = await useMultiFileAuthState(
-  process.env.MUDSLIDE_CACHE_FOLDER || '~/.local/share/mudslide')
-const sock = makeWASocket({ auth: state, markOnlineOnConnect: false })
-sock.ev.on('creds.update', saveCreds)
+const { state, saveCreds } = await useMultiFileAuthState(process.env.HOME + '/.local/share/mudslide');
+const sock = makeWASocket({ auth: state, markOnlineOnConnect: false });
+sock.ev.on('creds.update', saveCreds);
 
 sock.ev.on('messages.upsert', async ({ messages }) => {
   for (const m of messages) {
-    if (!m.key.fromMe && m.message?.conversation === '.ping') {
-      await sock.sendMessage(m.key.remoteJid, { text: 'pong' })
+    if (!m.key.fromMe && m.message?.conversation === '!ping') {
+      await sock.sendMessage(m.key.remoteJid, { text: 'pong 🏓' });
     }
   }
-})
+});
 ```
 
-## Recipes (see references/advanced-usecases.md)
+### 2. DevOps & Infrastructure Alerts
+Trigger formatted WhatsApp markdown alerts from bash scripts or cron jobs:
 
-- **DevOps alerts** — cron-triggered disk/CPU thresholds, deploy notifications, log watchers
-- **LLM assistant bridge** — route `!ai <prompt>` queries to Ollama/OpenAI/Claude from WhatsApp
-- **Daily digests** — weather/crypto/news briefings pushed to `me` at 8 AM
-- **Community management** — auto-welcome new members, multi-group poll campaigns
-- **Media pipelines** — generated charts sent with captions, TTS voice notes via `send-file --type audio`
+```bash
+./scripts/devops-alert.sh "120363424973777159@g.us" "Disk Usage" "92%" "85%"
+```
 
-## Safety
+### 3. Media & Voice Notes
+- **Images with Captions**: `mudslide send-image me chart.png --caption "Daily KPI"`
+- **Playable Audio (PTT)**: `mudslide send-file me reminder.mp3 --type audio`
+- **Playable Video**: `mudslide send-file me demo.mp4 --type video --caption "Demo"`
 
-- No Selenium/Chromium — pure WebSocket (saves ~500MB RAM vs browser automation)
-- Bulk/spam violates WhatsApp ToS. Keep rates human.
-- `DisconnectReason.loggedOut` → re-run `mudslide login`
+---
 
-## License
+## 🔒 Security & Privacy
 
-ISC — see [LICENSE](LICENSE). Author: [yashas-13](https://github.com/yashas-13).
+- **No Selenium / Puppeteer**: Direct WebSocket implementation saves ~500MB+ RAM.
+- **Local Credentials**: Auth keys stay on your local disk (`~/.local/share/mudslide`).
+- **ToS Responsibility**: Respect WhatsApp rate limits and terms of service. Use responsibly.
+
+---
+
+## 📄 License
+
+[ISC](LICENSE) © 2024 [yashas-13](https://github.com/yashas-13)
